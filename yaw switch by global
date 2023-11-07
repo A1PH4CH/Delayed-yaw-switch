@@ -1,0 +1,22 @@
+_DEBUG = true
+--simple delayed yaw switch source based on server tickcount
+--maded by global aka A1PH4CH
+local main = ui.create("Main page", "Select yaw value")
+local yaw_value1 = main:slider("Yaw value left", -180, 180, 0)
+local yaw_value2 = main:slider("Yaw value right", -180, 180, 0)
+local yaw_switch_delay = main:slider("Yaw switch delay", 2, 64, 2)
+local switch_true = false
+local refs = {
+ yaw_offset = ui.find("Aimbot", "Anti Aim", "Angles", "Yaw", "Offset")
+}
+local function delay_yaw()
+    if globals.tickcount % yaw_switch_delay:get() == 0 then 
+        switch_true = not switch_true
+    end
+    local yaw_offset_value = switch_true and yaw_value1:get() or yaw_value2:get()
+    refs.yaw_offset:override(yaw_offset_value)
+    rage.antiaim:inverter(switch_true)
+end
+events.createmove:set(function()
+    delay_yaw()
+end)
